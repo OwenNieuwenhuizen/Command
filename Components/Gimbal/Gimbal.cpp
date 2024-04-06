@@ -6,6 +6,13 @@
 
 #include "Components/Gimbal/Gimbal.hpp"
 #include "FpConfig.hpp"
+#include <wiringPi.h> // Include WiringPi library
+
+#define GPIO_PIN_SERVO1 18
+#define GPIO_PIN_SERVO2 19
+#define PWM_RANGE 1024
+
+
 
 namespace Components {
 
@@ -17,13 +24,41 @@ namespace Components {
     Gimbal(const char* const compName) :
       GimbalComponentBase(compName), servo1Position(90), servo1Moving(false), servo2Position(90), servo2Moving(false)
   {
-
+      wiringPiSetupGpio();
+      pinMode(GPIO_PIN_SERVO1, PWM_OUTPUT);
+      pinMode(GPIO_PIN_SERVO2, PWM_OUTPUT);
+      pwmSetRange(PWM_RANGE);
   }
 
   Gimbal ::
     ~Gimbal()
   {
 
+  }
+
+  // ----------------------------------------------------------------------
+  // Handler implementations for user-defined typed input ports
+  // ----------------------------------------------------------------------
+  int map(int x, int in_min, int in_max, int out_min, int out_max) {
+        return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
+  }
+
+  void Gimbal ::
+    run_handler(
+        NATIVE_INT_TYPE portNum,
+        NATIVE_UINT_TYPE context
+    )
+  {
+    this->lock.lock();
+    if (this->servo1Moving) {
+        int pwmValue1 = map(this->servo1Position, 0, 180, 0, PWM_RANGE);
+        pwmWrite(GPIO_PIN_SERVO1, pwmValue1);
+    }
+    if (this->servo2Moving) {
+        int pwmValue2 = map(this->servo2Position, 0, 180, 0, PWM_RANGE);
+        pwmWrite(GPIO_PIN_SERVO2, pwmValue2);
+    }
+    this->lock.unlock();
   }
 
   // ----------------------------------------------------------------------
@@ -45,7 +80,10 @@ namespace Components {
     else {
        this->lock.lock();
        this->servo1Position = position;
+       int pwmValue = map(position, 0, 180, 0, PWM_RANGE);
+       pwmWrite(GPIO_PIN_SERVO1, pwmValue);
        this->lock.unlock();
+       this->tlmWrite_Servo1Position(position);
     }
     this->cmdResponse_out(opCode, cmdSeq, cmdResp);
   }
@@ -65,7 +103,10 @@ namespace Components {
     else {
        this->lock.lock();
        this->servo2Position = position;
+       int pwmValue = map(position, 0, 180, 0, PWM_RANGE);
+       pwmWrite(GPIO_PIN_SERVO2, pwmValue);
        this->lock.unlock();
+       this->tlmWrite_Servo2Position(position);
     }
     this->cmdResponse_out(opCode, cmdSeq, cmdResp);
   }

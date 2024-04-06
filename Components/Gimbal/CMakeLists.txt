@@ -18,4 +18,14 @@ set(SOURCE_FILES
 #     Add your dependencies here
 # )
 
+# Add include directories for WiringPi
+include_directories(/usr/local/include)
+
+# Create the component library
+add_library(Gimbal ${SOURCE_FILES})
+
+# Add WiringPi library to the target
+target_link_libraries(Gimbal wiringPi)
+
+# Register the F prime module
 register_fprime_module()

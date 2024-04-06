@@ -18,6 +18,7 @@ module GDep {
 
     instance $health
     instance gimbal
+    instance gpioDriver
     instance blockDrv
     instance tlmSend
     instance cmdDisp

@@ -78,6 +78,10 @@
         <channel name="systemResources.CPU_15"/>
     </packet>
 
+    <packet name="GimbalChannels" id="8" level="1">
+        <channel name="gimbal.Servo1Position"/>
+        <channel name="gimbal.Servo2Position"/>
+    </packet>
     <!-- Ignored packets -->
 
     <ignore>

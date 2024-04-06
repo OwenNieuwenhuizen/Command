@@ -36,6 +36,13 @@ namespace Components {
       bool servo1Moving;
       U8 servo2Position;
       bool servo2Moving;
+      //! Handler implementation for run
+      //!
+      //! Port receiving calls from the rate group
+      void run_handler(
+          NATIVE_INT_TYPE portNum, //!< The port number
+          NATIVE_UINT_TYPE context //!< The call order
+      ) override;
       // ----------------------------------------------------------------------
       // Handler implementations for commands
       // ----------------------------------------------------------------------

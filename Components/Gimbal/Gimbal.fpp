@@ -31,6 +31,18 @@ module Components {
         event SetServo2Position(position: U8) \
             severity activity high \
             format "Set servo 2 position to {}."
+
+        @ Telemetry channel to report position for servo 1.
+        telemetry Servo1Position: U8
+
+        @ Telemetry channel to report position for servo 2.
+        telemetry Servo2Position: U8
+
+        @ Port receiving calls from the rate group
+        sync input port run: Svc.Sched
+
+        @ Port sending calls to the GPIO driver
+        output port gpioSet: Drv.GpioWrite
         ##############################################################################
         #### Uncomment the following examples to start customizing your component ####
         ##############################################################################
