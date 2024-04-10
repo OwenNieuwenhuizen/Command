@@ -24,6 +24,10 @@ include_directories(/usr/local/include)
 # Create the component library
 add_library(Gimbal ${SOURCE_FILES})
 
+set(MOD_DEPS
+    "/usr/lib/libwiringPi.so"
+)
+
 # Add WiringPi library to the target
 target_link_libraries(Gimbal wiringPi)
 
